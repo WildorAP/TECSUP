@@ -1,115 +1,79 @@
-# 🌊 Canales Hidráulicos - Sistema de Cálculos
+# Canales Hidráulicos - Sistema de Cálculos
 
-Aplicación web para cálculos hidráulicos de canales abiertos con arquitectura modular, autenticación y sistema de reportes.
+Se diseña una app web para hacer cálculos hidráulicos de canales abiertos. Básicamente, ingresas datos de tu canal (caudal, pendiente, rugosidad, etc.) y la app te calcula las dimensiones óptimas, te muestra gráficos y te deja guardar todo en la nube.
 
-## 🚀 Características
+## ¿Qué hace esta app?
 
-- ✅ **Autenticación completa** con Supabase Auth
-- ✅ **Módulo de Sección Óptima** (Diseño de máxima eficiencia hidráulica)
-- ✅ **Historial de cálculos** guardados en la nube
-- ✅ **Gráficos interactivos** con Recharts
-- ✅ **Interfaz moderna** con TailwindCSS + DaisyUI
-- ✅ **Arquitectura modular** escalable
-- 🔜 Generación de reportes PDF
-- 🔜 Más módulos (Tirante Normal, Tirante Crítico, Salto Hidráulico)
+Esta aplicación te ayuda a diseñar canales hidráulicos de forma rápida y profesional:
 
-## 📋 Requisitos Previos
+- **Calcula secciones óptimas**: Te dice cuál es el mejor ancho y profundidad para tu canal según el caudal que necesitas mover
+- **Guarda tus proyectos**: Todos tus cálculos quedan guardados en la nube con tu cuenta personal
+- **Genera reportes PDF**: Descarga reportes profesionales con todos los resultados y gráficos
+- **Visualiza resultados**: Gráficos interactivos que muestran la sección transversal de tu canal
+- **Historial completo**: Revisa, edita o elimina cálculos anteriores cuando quieras
 
-- Node.js 18+ 
-- npm o yarn
-- Cuenta en Supabase (gratuita)
+**Módulos disponibles:**
+- ✅ Sección Óptima (diseño de máxima eficiencia)
+- 🔜 Tirante Normal
+- 🔜 Tirante Crítico
+- 🔜 Salto Hidráulico
+- 🔜 Curva de Remanso
 
-## 🛠️ Instalación
+## ¿Cómo instalar y ejecutar?
 
-### 1. Clonar el repositorio
+### Lo que necesitas antes de empezar:
+
+- **Node.js** (versión 18 o superior) -(https://nodejs.org/)
+- **Backend: Supabase** (es gratis) -(https://supabase.com)
+- **Frintend: VITE, con JAVASCRIPTS**
+
+### Paso 1: Clona el proyecto
 
 ```bash
-cd CANALES
+git clone https://github.com/WildorAP/TECSUP.git
+cd TECSUP
 ```
 
-### 2. Instalar dependencias
+### Paso 2: Instala las dependencias
 
 ```bash
 npm install
 ```
 
-### 3. Configurar Supabase
+### Paso 3: Configura tu base de datos en Supabase
 
-#### 3.1. Crear proyecto en Supabase
+**3.1. Crea tu proyecto en Supabase:**
+1. Entra a [supabase.com](https://supabase.com) y crea una cuenta
+2. Dale a "New Project" y ponle un nombre
 
-1. Ve a [https://supabase.com](https://supabase.com)
-2. Crea una cuenta gratuita
-3. Crea un nuevo proyecto
-4. Espera a que se complete la configuración
 
-#### 3.2. Crear las tablas en Supabase
 
-Ve a **SQL Editor** en tu proyecto de Supabase y ejecuta:
 
-```sql
--- Tabla de cálculos
-CREATE TABLE calculations (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  module_type TEXT NOT NULL,
-  name TEXT NOT NULL,
-  input_data JSONB NOT NULL,
-  results JSONB NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Índices para mejorar rendimiento
-CREATE INDEX idx_calculations_user_id ON calculations(user_id);
-CREATE INDEX idx_calculations_module_type ON calculations(module_type);
-CREATE INDEX idx_calculations_created_at ON calculations(created_at DESC);
-
--- Habilitar Row Level Security (RLS)
-ALTER TABLE calculations ENABLE ROW LEVEL SECURITY;
-
--- Políticas de seguridad: Los usuarios solo pueden ver/editar sus propios cálculos
-CREATE POLICY "Users can view their own calculations"
-  ON calculations FOR SELECT
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert their own calculations"
-  ON calculations FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update their own calculations"
-  ON calculations FOR UPDATE
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete their own calculations"
-  ON calculations FOR DELETE
-  USING (auth.uid() = user_id);
-```
-
-#### 3.3. Configurar variables de entorno
+**3.2. Conecta la app con Supabase:**
 
 1. Copia el archivo de ejemplo:
 ```bash
 cp .env.example .env
 ```
 
-2. Obtén tus credenciales de Supabase:
-   - Ve a **Project Settings** > **API**
-   - Copia la **Project URL**
-   - Copia la **anon/public key**
+2. Obtén tus credenciales:
+   - En Supabase, ve a **Project Settings** (el ícono de engranaje)
+   - Busca la sección **API**
+   - Copia la **Project URL** y la **anon/public key**
 
-3. Edita el archivo `.env`:
+3. Abre el archivo `.env` que acabas de crear y pega tus credenciales:
 ```env
-VITE_SUPABASE_URL=tu_url_de_supabase
-VITE_SUPABASE_ANON_KEY=tu_anon_key_de_supabase
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu_clave_publica_aqui
 ```
 
-### 4. Iniciar el servidor de desarrollo
+### Paso 4: ¡Arranca la app!
 
 ```bash
 npm run dev
 ```
 
-La aplicación estará disponible en `http://localhost:5173`
+Listo, abre tu navegador en `http://localhost:5173` y ya puedes usar la app 🎉
 
 ## 📁 Estructura del Proyecto
 
@@ -141,51 +105,61 @@ src/
 └── main.jsx                    # Punto de entrada
 ```
 
-## 🎯 Uso
+## ¿Cómo usar la app?
 
-### 1. Registro e Inicio de Sesión
+### Primera vez: Crea tu cuenta
 
-1. Abre la aplicación en tu navegador
-2. Haz clic en "Regístrate aquí"
-3. Completa el formulario de registro
-4. Verifica tu correo electrónico (revisa spam)
-5. Inicia sesión con tus credenciales
+1. Abre la app en tu navegador
+2. Dale a "Regístrate aquí"
+3. Llena el formulario con tu email y contraseña
+4. Revisa tu correo (a veces cae en spam) y confirma tu cuenta
+5. Inicia sesión y listo
 
-### 2. Realizar un Cálculo
+### Hacer un cálculo de sección óptima
 
-1. Desde el Dashboard, haz clic en **"Sección Óptima"**
-2. Ingresa los datos:
-   - **Caudal Q** (m³/s)
-   - **Talud Z** (H:V) - Ejemplo: 1.5
-   - **Coeficiente de Manning n** - Ejemplo: 0.013 (concreto)
-   - **Pendiente S** (m/m) - Ejemplo: 0.001
-3. Haz clic en **"Calcular Sección Óptima"**
-4. Revisa los resultados y el gráfico
-5. Haz clic en **"Guardar Cálculo"** para guardarlo
+1. En el Dashboard, entra a **"Sección Óptima"**
+2. Llena los datos de tu canal:
+   - **Caudal Q** (m³/s) - Ejemplo: 10
+   - **Talud Z** (H:V) - Ejemplo: 1.5 (significa 1.5 horizontal por 1 vertical)
+   - **Manning n** - Ejemplo: 0.013 (concreto liso) o 0.020 (tierra)
+   - **Pendiente S** (m/m) - Ejemplo: 0.001 (0.1%)
+3. Dale a **"Calcular Sección Óptima"**
+4. Revisa los resultados: tirante, ancho, velocidad, etc.
+5. Si quieres guardarlo, dale a **"Guardar Cálculo"** y ponle un nombre
+6. Para descargar el reporte, dale a **"Descargar PDF"**
 
-### 3. Ver Historial
+### Ver tus cálculos anteriores
 
-1. Haz clic en **"Historial"** en la barra de navegación
-2. Verás todos tus cálculos guardados
-3. Haz clic en **"Ver"** para cargar un cálculo anterior
-4. Puedes eliminar cálculos con el botón de basura
+1. En el menú de arriba, entra a **"Historial"**
+2. Ahí verás todos tus cálculos guardados
+3. Dale a **"Ver"** para abrir uno y editarlo
+4. Si ya no lo necesitas, dale al ícono de basura para eliminarlo
 
-## 🔧 Tecnologías Utilizadas
+## ¿Qué tecnologías usamos?
 
-- **React 19** - Framework frontend
-- **Vite** - Build tool
-- **React Router** - Navegación
-- **Supabase** - Backend (Auth + Database)
-- **Zustand** - Estado global
-- **TailwindCSS** - Estilos
-- **DaisyUI** - Componentes UI
-- **Recharts** - Gráficos
-- **React Hook Form** - Formularios
-- **React Toastify** - Notificaciones
-- **Lucide React** - Iconos
-- **date-fns** - Manejo de fechas
+Esta app está construida con herramientas modernas y probadas:
 
-## 📚 Módulos Disponibles
+**Frontend (lo que ves):**
+- **React 19** - La librería principal para construir la interfaz
+- **Vite** - Para que el desarrollo sea súper rápido
+- **TailwindCSS + DaisyUI** - Para que se vea bonito sin escribir mucho CSS
+- **Recharts** - Para los gráficos interactivos del canal
+- **React Router** - Para navegar entre páginas sin recargar
+
+**Backend (donde se guarda todo):**
+- **Supabase** - Es como Firebase pero open source. Maneja:
+  - La autenticación (login/registro)
+  - La base de datos PostgreSQL
+  - Las políticas de seguridad (cada quien ve solo sus cálculos)
+
+**Otras herramientas útiles:**
+- **Zustand** - Manejo de estado global (más simple que Redux)
+- **jsPDF + Canvg** - Para generar los reportes PDF con gráficos
+- **React Toastify** - Las notificaciones que aparecen arriba
+- **Lucide React** - Los íconos bonitos que ves por toda la app
+- **date-fns** - Para formatear fechas de forma legible
+
+## Módulos Disponibles
 
 ### ✅ Sección Óptima
 Diseño de canal trapezoidal con máxima eficiencia hidráulica. Calcula las dimensiones óptimas que minimizan el perímetro mojado para un caudal dado.
@@ -202,31 +176,18 @@ Diseño de canal trapezoidal con máxima eficiencia hidráulica. Calcula las dim
 - Curva de Remanso
 - Energía Específica
 
-## 🐛 Solución de Problemas
+## 🐛 Si algo no funciona...
 
-### Error: "Faltan variables de entorno de Supabase"
-- Verifica que el archivo `.env` existe
-- Verifica que las variables están correctamente configuradas
-- Reinicia el servidor de desarrollo
+**"Faltan variables de entorno de Supabase"**
+- Revisa que el archivo `.env` exista en la raíz del proyecto
+- Verifica que copiaste bien la URL y la key de Supabase
+- Reinicia el servidor (`Ctrl+C` y luego `npm run dev`)
 
-### Error al guardar cálculos
-- Verifica que las tablas están creadas en Supabase
-- Verifica que las políticas RLS están configuradas
-- Verifica que estás autenticado
+**No puedo guardar cálculos**
+- Asegúrate de haber ejecutado el script SQL en Supabase (Paso 3.2)
+- Verifica que iniciaste sesión en la app
+- Revisa la consola del navegador (F12) para ver errores
 
-### Los estilos no se cargan
-- Ejecuta `npm install` nuevamente
-- Verifica que TailwindCSS está configurado correctamente
-- Limpia la caché: `npm run build` y luego `npm run dev`
 
-## 📝 Licencia
 
-Este proyecto es de código abierto y está disponible bajo la licencia MIT.
 
-## 👨‍💻 Autor
-
-Desarrollado para ingeniería hidráulica - TECSUP
-
----
-
-¿Preguntas o sugerencias? Abre un issue en el repositorio.

@@ -71,7 +71,7 @@ export default function Register() {
               <input
                 type="text"
                 name="name"
-                placeholder="Juan Pérez"
+                placeholder="Wildor Apaza"
                 className="input input-bordered"
                 value={formData.name}
                 onChange={handleChange}
